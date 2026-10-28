@@ -28,7 +28,7 @@ public class DemoApplication implements CommandLineRunner {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
-	@GetMapping("/clientes")
+	@GetMapping("/cliente")
 	public String home() {
 		return "Hello, World!";
 	}
