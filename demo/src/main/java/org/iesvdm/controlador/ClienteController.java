@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.iesvdm.modelo.Cliente;
 import org.iesvdm.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -19,15 +20,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 //@RequestMapping ("/clientes")
 public class ClienteController {
 
+    // Version 1: inyeccion automatica por atributo.
+    @Autowired
     private ClienteService clienteService;
 
-    //Se utiliza inyeccion automatica por constructor del framework Spring.
-    //Por tanto, se puede omitir la anotacion Autowired
-    //@Autowired
-
-    public ClienteController(ClienteService clienteService){
-        this.clienteService = clienteService;
-    }
+    /*
+     * Version 2: inyeccion automatica por constructor.
+     * Si se utiliza esta version, hay que comentar el atributo y @Autowired de
+     * la version 1 y descomentar este constructor.
+     *
+     * public ClienteController(ClienteService clienteService) {
+     *     this.clienteService = clienteService;
+     * }
+     */
     //@RequestMapping(value = "/clientes", method = RequestMethod.GET)
     //equivalente a la siguiente anotación
     @GetMapping("/clientes") //Al no tener ruta base para el controlador, cada método tiene que tener la ruta completa

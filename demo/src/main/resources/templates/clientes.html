@@ -2,69 +2,181 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clientes</title>
 
     <style>
-        .clearfix:after {
-            content: "";
-            display: block;
-            clear: both;
+        :root {
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+            background: #f3f6fb;
+        }
+
+        body {
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            margin: 0;
+            color: #172554;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            background: #ffffff;
+            border: 1px solid #dbe3ef;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.08);
+        }
+
+        table {
+            width: 100%;
+            min-width: 850px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #1d4ed8;
+            color: #ffffff;
+            font-size: 0.85rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #eff6ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .acciones {
+            white-space: nowrap;
+        }
+
+        .boton,
+        .acciones input {
+            display: inline-block;
+            border: 0;
+            border-radius: 6px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .boton {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .boton:hover {
+            background: #15803d;
+        }
+
+        .acciones form {
+            display: inline-block;
+            margin: 0 0.2rem 0.25rem 0;
+        }
+
+        .acciones form:nth-child(1) input {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .acciones form:nth-child(2) input {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .acciones form:nth-child(3) input {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .encabezado {
+                align-items: flex-start;
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div id="contenedora" style="float:none; margin: 0 auto;width: 95%;">
-        <div class="clearfix">
-            <div style="float: left; width: 50%">
-                <h1>Clientes</h1>
-            </div>
-
-            <div style="float: none;width: auto;overflow: hidden;min-height: 80px;position: relative;">
-                <div style="position: absolute; left: 39%; top : 39%;">
-
-                    <form action="/clientes/crear">
-                        <input type="submit" value="Crear">
-                    </form>
-
-                </div>
-            </div>
+    <main class="contenedor">
+        <div class="encabezado">
+            <h1>Clientes</h1>
+            <a class="boton" href="/clientes/crear">+ Crear cliente</a>
         </div>
 
-        <div class="clearfix">
-            <div style="float: left;width: 14%">Id</div>
-            <div style="float: left;width: 14%">Nombre</div>
-            <div style="float: left;width: 14%">Apellido1</div>
-            <div style="float: left;width: 14%">Apellido2</div>
-            <div style="float: left;width: 14%">Ciudad</div>
-            <div style="float: left;width: 14%">Categoría</div>
-            <div style="float: none;width: auto;overflow: hidden;">Acción</div>
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Apellido 1</th>
+                        <th>Apellido 2</th>
+                        <th>Ciudad</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cliente : ${listaClientes}">
+                        <td th:text="${cliente.id}">id</td>
+                        <td th:text="${cliente.nombre}">nombre</td>
+                        <td th:text="${cliente.apellido1}">apellido1</td>
+                        <td th:text="${cliente.apellido2 ?: '-'}">apellido2</td>
+                        <td th:text="${cliente.ciudad}">ciudad</td>
+                        <td th:text="${cliente.categoria}">categoría</td>
+                        <td class="acciones">
+                            <form th:action="@{/clientes/{id}(id=${cliente.id})}">
+                                <input type="submit" value="Ver detalle">
+                            </form>
+                            <form th:action="@{/clientes/editar/{id}(id=${cliente.id})}">
+                                <input type="submit" value="Editar">
+                            </form>
+                            <form th:action="@{/clientes/borrar/{id}(id=${cliente.id})}" method="post">
+                                <input type="submit" value="Eliminar">
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
-        <div class="clearfix">
-            <hr>
-        </div>
-
-        <div th:each="cliente : ${listaClientes}" style="margin-top: 6px;" class="clearfix">
-            <div style="float: left;width: 14%" th:text="${cliente.id}">id</div>
-            <div style="float: left;width: 14%" th:text="${cliente.nombre}">nombre</div>
-            <div style="float: left;width: 14%" th:text="${cliente.apellido1}">apellido1</div>
-            <div style="float: left;width: 14%" th:text="${cliente.apellido2 ?: '&nbsp;'}">apellido2</div>
-            <div style="float: left;width: 14%" th:text="${cliente.ciudad}">ciudad</div>
-            <div style="float: left;width: 14%" th:text="${cliente.categoria}">categoría</div>
-            <div style="float: none;width: auto;overflow: hidden;">
-                <form th:action="@{/clientes/{id}(id=${cliente.id})}" style="display: inline;">
-                    <input type="submit" value="Ver Detalle">
-                </form>
-                <form th:action="@{/clientes/editar/{id}(id=${cliente.id})}" style="display: inline;">
-                    <input type="submit" value="Editar">
-                </form>
-                <form th:action="@{/clientes/borrar/{id}(id=${cliente.id})}" method="post" style="display: inline;">
-                    <input type="submit" value="Eliminar">
-                </form>
-            </div>
-        </div>
-    </div>
-
+    </main>
 </body>
 </html>

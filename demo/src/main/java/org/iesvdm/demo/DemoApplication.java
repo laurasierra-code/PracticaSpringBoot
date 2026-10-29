@@ -21,8 +21,20 @@ import org.springframework.boot.CommandLineRunner; //interfaz que permite ejecut
 @Slf4j
 public class DemoApplication implements CommandLineRunner {
 
+	// Version 1: inyeccion automatica por atributo.
 	@Autowired
 	private ClienteDAO clienteDAO;
+
+	/*
+	 * Version 2: inyeccion automatica por constructor.
+	 * Se deja comentada porque la version activa utiliza @Autowired.
+	 *
+	 * private final ClienteDAO clienteDAO;
+	 *
+	 * public DemoApplication(ClienteDAO clienteDAO) {
+	 *     this.clienteDAO = clienteDAO;
+	 * }
+	 */
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
