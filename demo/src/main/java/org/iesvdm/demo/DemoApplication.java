@@ -3,7 +3,9 @@ package org.iesvdm.demo;
 
 import java.util.Optional;
 
+import org.iesvdm.dao.ComercialDAO;
 import org.iesvdm.dao.ClienteDAO;
+import org.iesvdm.modelo.Comercial;
 import org.iesvdm.modelo.Cliente;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +26,9 @@ public class DemoApplication implements CommandLineRunner {
 	// Version 1: inyeccion automatica por atributo.
 	@Autowired
 	private ClienteDAO clienteDAO;
+
+	@Autowired
+	private ComercialDAO comercialDAO;
 
 	/*
 	 * Version 2: inyeccion automatica por constructor.
@@ -77,5 +82,25 @@ public class DemoApplication implements CommandLineRunner {
 			log.info("No se encontró cliente con id {}", id);
 		}
 
+		log.info("Pruebas de ComercialDAO");
+		comercialDAO.getAll().forEach(comercial -> log.info("Comercial: {}", comercial));
+
+		Comercial comercialPrueba = new Comercial(0, "Comercial", "Prueba", null, 0.10f);
+		comercialDAO.create(comercialPrueba);
+		log.info("Comercial creado: {}", comercialPrueba);
+
+		Optional<Comercial> comercialEncontrado = comercialDAO.find(comercialPrueba.getId());
+		if (comercialEncontrado.isPresent()) {
+			log.info("Comercial encontrado: {}", comercialEncontrado.get());
+
+			comercialPrueba.setComision(0.20f);
+			comercialDAO.update(comercialPrueba);
+			log.info("Comercial actualizado: {}", comercialDAO.find(comercialPrueba.getId()).orElseThrow());
+		} else {
+			log.warn("No se encontró el comercial de prueba con id {}", comercialPrueba.getId());
+		}
+
+		comercialDAO.delete(comercialPrueba.getId());
+		log.info("Comercial de prueba eliminado: {}", comercialPrueba.getId());
 	}
 }
