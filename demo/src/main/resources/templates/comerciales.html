@@ -1,0 +1,129 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comerciales</title>
+
+    <style>
+        :root {
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+            background: #f3f6fb;
+        }
+
+        body {
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .encabezado {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            margin: 0;
+            color: #172554;
+        }
+
+        .enlace {
+            color: #1d4ed8;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            background: #ffffff;
+            border: 1px solid #dbe3ef;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.08);
+        }
+
+        table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #1d4ed8;
+            color: #ffffff;
+            font-size: 0.85rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #eff6ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .encabezado {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="contenedor">
+        <div class="encabezado">
+            <h1>Comerciales</h1>
+            <a class="enlace" href="/clientes">Ver clientes</a>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Apellido 1</th>
+                        <th>Apellido 2</th>
+                        <th>Comisión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="comercial : ${listaComerciales}">
+                        <td th:text="${comercial.id}">id</td>
+                        <td th:text="${comercial.nombre}">nombre</td>
+                        <td th:text="${comercial.apellido1}">apellido1</td>
+                        <td th:text="${comercial.apellido2 ?: '-'}">apellido2</td>
+                        <td th:text="${comercial.comision}">comisión</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
