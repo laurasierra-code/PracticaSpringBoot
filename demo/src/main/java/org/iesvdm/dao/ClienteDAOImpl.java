@@ -57,7 +57,11 @@ public class ClienteDAOImpl implements ClienteDAO {
 			ps.setString(idx++, cliente.getApellido1());
 			ps.setString(idx++, cliente.getApellido2());
 			ps.setString(idx++, cliente.getCiudad());
-			ps.setInt(idx, cliente.getCategoria());
+			if (cliente.getCategoria() == null) {
+				ps.setObject(idx, null);
+			} else {
+				ps.setInt(idx, cliente.getCategoria());
+			}
 			return ps;
 		},keyHolder);
 		
@@ -73,15 +77,14 @@ public class ClienteDAOImpl implements ClienteDAO {
 	public List<Cliente> getAll() {
 		
 		List<Cliente> listFab = jdbcTemplate.query(
-                "SELECT * FROM cliente",
-                (rs, rowNum) -> new Cliente(rs.getInt("id"),
-                						 	rs.getString("nombre"),
-                						 	rs.getString("apellido1"),
-                						 	rs.getString("apellido2"),
-                						 	rs.getString("ciudad"),
-                						 	rs.getInt("categoría")
-                						 	)
-        );
+				"SELECT * FROM cliente",
+				(rs, rowNum) -> new Cliente(
+						rs.getInt("id"),
+						rs.getString("nombre"),
+						rs.getString("apellido1"),
+						rs.getString("apellido2"),
+						rs.getString("ciudad"),
+						rs.getObject("categoría", Integer.class)));
 		
 		log.info("Devueltos {} registros.", listFab.size());
 		
@@ -95,16 +98,16 @@ public class ClienteDAOImpl implements ClienteDAO {
 	@Override
 	public Optional<Cliente> find(int id) {
 		
-		Cliente fab =  jdbcTemplate
-				.queryForObject("SELECT * FROM cliente WHERE id = ?"														
-								, (rs, rowNum) -> new Cliente(rs.getInt("id"),
-            						 						rs.getString("nombre"),
-            						 						rs.getString("apellido1"),
-            						 						rs.getString("apellido2"),
-            						 						rs.getString("ciudad"),
-            						 						rs.getInt("categoría")) 
-								, id
-								);
+		Cliente fab = jdbcTemplate.query(
+				"SELECT * FROM cliente WHERE id = ?",
+				(rs, rowNum) -> new Cliente(
+						rs.getInt("id"),
+						rs.getString("nombre"),
+						rs.getString("apellido1"),
+						rs.getString("apellido2"),
+						rs.getString("ciudad"),
+						rs.getObject("categoría", Integer.class)),
+				id).stream().findFirst().orElse(null);
 		
 		if (fab != null) { 
 			return Optional.of(fab);}
@@ -116,6 +119,13 @@ public class ClienteDAOImpl implements ClienteDAO {
 	/**
 	 * Actualiza Cliente con campos del bean Cliente según ID del mismo.
 	 */
+	@Override
+	public boolean hasPedidos(int id) {
+		Integer pedidos = jdbcTemplate.queryForObject(
+				"SELECT COUNT(*) FROM pedido WHERE id_cliente = ?", Integer.class, id);
+		return pedidos != null && pedidos > 0;
+	}
+
 	@Override
 	public void update(Cliente cliente) {
 		
@@ -151,4 +161,3 @@ public class ClienteDAOImpl implements ClienteDAO {
 	}
 	
 }
-

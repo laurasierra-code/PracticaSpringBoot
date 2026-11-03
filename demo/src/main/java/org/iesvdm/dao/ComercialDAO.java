@@ -11,6 +11,7 @@ public interface ComercialDAO {
 	List<Comercial> getAll();
 
 	Optional<Comercial> find(int id);
+	boolean hasPedidos(int id);
 
 	void update(Comercial comercial);
 

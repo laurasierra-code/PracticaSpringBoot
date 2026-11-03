@@ -36,7 +36,11 @@ public class ComercialDAOImpl implements ComercialDAO {
 			ps.setString(index++, comercial.getNombre());
 			ps.setString(index++, comercial.getApellido1());
 			ps.setString(index++, comercial.getApellido2());
-			ps.setFloat(index, comercial.getComision());
+			if (comercial.getComision() == null) {
+				ps.setObject(index, null);
+			} else {
+				ps.setFloat(index, comercial.getComision());
+			}
 			return ps;
 		}, keyHolder);
 
@@ -53,7 +57,7 @@ public class ComercialDAOImpl implements ComercialDAO {
 						rs.getString("nombre"),
 						rs.getString("apellido1"),
 						rs.getString("apellido2"),
-						rs.getFloat("comisión")));
+						rs.getObject("comisión", Float.class)));
 
 		log.info("Devueltos {} comerciales.", comerciales.size());
 		return comerciales;
@@ -61,17 +65,24 @@ public class ComercialDAOImpl implements ComercialDAO {
 
 	@Override
 	public Optional<Comercial> find(int id) {
-		Comercial comercial = jdbcTemplate.queryForObject(
+		Comercial comercial = jdbcTemplate.query(
 				"SELECT * FROM comercial WHERE id = ?",
 				(rs, rowNum) -> new Comercial(
 						rs.getInt("id"),
 						rs.getString("nombre"),
 						rs.getString("apellido1"),
 						rs.getString("apellido2"),
-						rs.getFloat("comisión")),
-				id);
+						rs.getObject("comisión", Float.class)),
+				id).stream().findFirst().orElse(null);
 
 		return Optional.ofNullable(comercial);
+	}
+
+	@Override
+	public boolean hasPedidos(int id) {
+		Integer pedidos = jdbcTemplate.queryForObject(
+				"SELECT COUNT(*) FROM pedido WHERE id_comercial = ?", Integer.class, id);
+		return pedidos != null && pedidos > 0;
 	}
 
 	@Override

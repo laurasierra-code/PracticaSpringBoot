@@ -8,6 +8,7 @@ public interface ClienteDAO {
 	public void create(Cliente cliente);
 	public List<Cliente> getAll();
 	public Optional<Cliente>  find(int id);
+	boolean hasPedidos(int id);
 	public void update(Cliente cliente);
 	public void delete(int id);
 }
