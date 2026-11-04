@@ -46,7 +46,21 @@ public class PedidoController {
 	}
 
 	@PostMapping("/guardar")
-	public String guardar(@ModelAttribute Pedido pedido) {
+	public String guardar(@ModelAttribute Pedido pedido, Model model) {
+		StringBuilder error = new StringBuilder();
+		if (clienteService.find(pedido.getClienteId()).isEmpty()) {
+			error.append("El cliente seleccionado no existe. ");
+		}
+		if (comercialService.find(pedido.getComercialId()).isEmpty()) {
+			error.append("El comercial seleccionado no existe.");
+		}
+		if (error.length() > 0) {
+			model.addAttribute("error", error.toString());
+			cargarRelaciones(model);
+			model.addAttribute("titulo", pedido.getId() == 0 ? "Crear pedido" : "Editar pedido");
+			return "pedido-form";
+		}
+
 		if (pedido.getId() == 0) {
 			pedidoService.create(pedido);
 		} else {
