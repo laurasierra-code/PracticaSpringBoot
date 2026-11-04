@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+@RequestMapping("/clientes")
 @Controller //usa templates html (thymeleaf, freemarker, etc) para devolver la respuesta al cliente. No devuelve datos en formato JSON o XML como hace @RestController
 
 //Se puede fijar la ruta base de las peticiones  de este controador.
@@ -39,7 +41,7 @@ public class ClienteController {
      */
     //@RequestMapping(value = "/clientes", method = RequestMethod.GET)
     //equivalente a la siguiente anotación
-    @GetMapping("/clientes") //Al no tener ruta base para el controlador, cada método tiene que tener la ruta completa
+    @GetMapping
     public String listar(Model model) {
 
         List<Cliente> listaClientes = clienteService.listAll();
@@ -48,14 +50,14 @@ public class ClienteController {
         return "clientes"; //devuelve la plantilla html clientes.html que se encuentra en src/main/resources/templates
     }
 
-    @GetMapping("/clientes/crear")
+    @GetMapping("/crear")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("cliente", new Cliente());
         model.addAttribute("titulo", "Crear cliente");
         return "cliente-form";
     }
 
-    @PostMapping("/clientes/guardar")
+    @PostMapping("/guardar")
     public String guardar(@ModelAttribute Cliente cliente) {
         if (cliente.getId() == 0) {
             clienteService.create(cliente);
@@ -65,7 +67,7 @@ public class ClienteController {
         return "redirect:/clientes";
     }
 
-    @GetMapping("/clientes/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable int id, Model model) {
         Cliente cliente = clienteService.find(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado: " + id));
@@ -74,7 +76,7 @@ public class ClienteController {
         return "cliente-form";
     }
 
-    @GetMapping("/clientes/{id}")
+    @GetMapping("/{id}")
     public String detalle(@PathVariable int id, Model model) {
         Cliente cliente = clienteService.find(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado: " + id));
@@ -82,7 +84,7 @@ public class ClienteController {
         return "cliente-detalle";
     }
 
-    @PostMapping("/clientes/borrar/{id}")
+    @PostMapping("/borrar/{id}")
     public String borrar(@PathVariable int id, RedirectAttributes redirectAttributes) {
         if (clienteService.hasPedidos(id)) {
             redirectAttributes.addFlashAttribute("error",

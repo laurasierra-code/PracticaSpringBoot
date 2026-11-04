@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@RequestMapping("/comerciales")
 @Controller
 public class ComercialController {
 
@@ -21,7 +23,7 @@ public class ComercialController {
         this.comercialService = comercialService;
     }
 
-    @GetMapping("/comerciales")
+    @GetMapping
     public String listar(Model model) {
         List<Comercial> listaComerciales = comercialService.listAll();
         model.addAttribute("listaComerciales", listaComerciales);
@@ -29,14 +31,14 @@ public class ComercialController {
         return "comerciales";
     }
 
-    @GetMapping("/comerciales/crear")
+    @GetMapping("/crear")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("comercial", new Comercial());
         model.addAttribute("titulo", "Crear comercial");
         return "comercial-form";
     }
 
-    @PostMapping("/comerciales/guardar")
+    @PostMapping("/guardar")
     public String guardar(@ModelAttribute Comercial comercial) {
         if (comercial.getId() == 0) {
             comercialService.create(comercial);
@@ -46,7 +48,7 @@ public class ComercialController {
         return "redirect:/comerciales";
     }
 
-    @GetMapping("/comerciales/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable int id, Model model) {
         Comercial comercial = comercialService.find(id)
                 .orElseThrow(() -> new IllegalArgumentException("Comercial no encontrado: " + id));
@@ -55,7 +57,7 @@ public class ComercialController {
         return "comercial-form";
     }
 
-    @GetMapping("/comerciales/{id}")
+    @GetMapping("/{id}")
     public String detalle(@PathVariable int id, Model model) {
         Comercial comercial = comercialService.find(id)
                 .orElseThrow(() -> new IllegalArgumentException("Comercial no encontrado: " + id));
@@ -63,7 +65,7 @@ public class ComercialController {
         return "comercial-detalle";
     }
 
-    @PostMapping("/comerciales/borrar/{id}")
+    @PostMapping("/borrar/{id}")
     public String borrar(@PathVariable int id, RedirectAttributes redirectAttributes) {
         if (comercialService.hasPedidos(id)) {
             redirectAttributes.addFlashAttribute("error",

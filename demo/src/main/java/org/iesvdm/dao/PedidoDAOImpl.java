@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.iesvdm.modelo.Pedido;
+import org.iesvdm.modelo.PedidoDetalle;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -72,6 +73,53 @@ public class PedidoDAOImpl implements PedidoDAO {
 	}
 
 	@Override
+	public List<PedidoDetalle> getAllDetalles() {
+		List<PedidoDetalle> pedidos = jdbcTemplate.query("""
+				SELECT p.id, p.total, p.fecha, p.id_cliente, p.id_comercial,
+				       CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente_nombre,
+				       CONCAT_WS(' ', co.nombre, co.apellido1, co.apellido2) AS comercial_nombre
+				FROM pedido p
+				JOIN cliente c ON c.id = p.id_cliente
+				JOIN comercial co ON co.id = p.id_comercial
+				""",
+				(rs, rowNum) -> mapPedidoDetalle(
+						rs.getInt("id"),
+						rs.getDouble("total"),
+						rs.getDate("fecha"),
+						rs.getInt("id_cliente"),
+						rs.getInt("id_comercial"),
+						rs.getString("cliente_nombre"),
+						rs.getString("comercial_nombre")));
+
+		log.info("Devueltos {} detalles de pedidos.", pedidos.size());
+		return pedidos;
+	}
+
+	@Override
+	public Optional<PedidoDetalle> findDetalle(int id) {
+		PedidoDetalle pedido = jdbcTemplate.query("""
+				SELECT p.id, p.total, p.fecha, p.id_cliente, p.id_comercial,
+				       CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente_nombre,
+				       CONCAT_WS(' ', co.nombre, co.apellido1, co.apellido2) AS comercial_nombre
+				FROM pedido p
+				JOIN cliente c ON c.id = p.id_cliente
+				JOIN comercial co ON co.id = p.id_comercial
+				WHERE p.id = ?
+				""",
+				(rs, rowNum) -> mapPedidoDetalle(
+						rs.getInt("id"),
+						rs.getDouble("total"),
+						rs.getDate("fecha"),
+						rs.getInt("id_cliente"),
+						rs.getInt("id_comercial"),
+						rs.getString("cliente_nombre"),
+						rs.getString("comercial_nombre")),
+				id).stream().findFirst().orElse(null);
+
+		return Optional.ofNullable(pedido);
+	}
+
+	@Override
 	public void update(Pedido pedido) {
 		int rows = jdbcTemplate.update("""
 				UPDATE pedido SET
@@ -98,5 +146,11 @@ public class PedidoDAOImpl implements PedidoDAO {
 
 	private Pedido mapPedido(int id, double total, Date fecha, int clienteId, int comercialId) {
 		return new Pedido(id, total, fecha == null ? null : fecha.toLocalDate(), clienteId, comercialId);
+	}
+
+	private PedidoDetalle mapPedidoDetalle(int id, double total, Date fecha, int clienteId, int comercialId,
+			String clienteNombre, String comercialNombre) {
+		return new PedidoDetalle(id, total, fecha == null ? null : fecha.toLocalDate(), clienteId, comercialId,
+				clienteNombre, comercialNombre);
 	}
 }
