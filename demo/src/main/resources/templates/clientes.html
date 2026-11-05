@@ -19,27 +19,37 @@
 
     <div class="alert alert-warning" th:if="${error}" th:text="${error}"></div>
 
-    <div class="row g-4">
-        <div class="col-12 col-md-6 col-xl-4" th:each="cliente : ${listaClientes}">
-            <article class="card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <h2 class="h5 card-title" th:text="${cliente.nombre + ' ' + cliente.apellido1 + (cliente.apellido2 != null ? ' ' + cliente.apellido2 : '')}">Nombre completo</h2>
-                    <p class="card-text mb-1"><strong>Ciudad:</strong> <span th:text="${cliente.ciudad ?: '-'}">Ciudad</span></p>
-                    <p class="card-text"><strong>Categoría:</strong> <span th:text="${cliente.categoria ?: '-'}">Categoría</span></p>
-                </div>
-                <div class="card-footer bg-white border-0 d-flex flex-wrap gap-2">
-                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/clientes/{id}(id=${cliente.id})}">Ver detalle</a>
-                    <a class="btn btn-sm btn-outline-primary" th:href="@{/clientes/editar/{id}(id=${cliente.id})}">Editar</a>
-                    <form th:action="@{/clientes/borrar/{id}(id=${cliente.id})}" method="post">
-                        <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
-                    </form>
-                </div>
-            </article>
-        </div>
-        <div class="col-12" th:if="${#lists.isEmpty(listaClientes)}">
-            <div class="alert alert-info">No hay clientes registrados.</div>
-        </div>
+    <div class="table-responsive" th:unless="${#lists.isEmpty(listaClientes)}">
+        <table class="table table-striped table-hover align-middle bg-white shadow-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre completo</th>
+                    <th>Ciudad</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${listaClientes}">
+                    <td th:text="${cliente.id}">1</td>
+                    <td th:text="${cliente.nombre + ' ' + cliente.apellido1 + (cliente.apellido2 != null ? ' ' + cliente.apellido2 : '')}">Nombre completo</td>
+                    <td th:text="${cliente.ciudad ?: '-'}">Ciudad</td>
+                    <td th:text="${cliente.categoria ?: '-'}">Categoría</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/clientes/{id}(id=${cliente.id})}">Ver detalle</a>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/clientes/editar/{id}(id=${cliente.id})}">Editar</a>
+                            <form th:action="@{/clientes/borrar/{id}(id=${cliente.id})}" method="post">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+    <div class="alert alert-info" th:if="${#lists.isEmpty(listaClientes)}">No hay clientes registrados.</div>
 </main>
 </body>
 </html>

@@ -19,26 +19,35 @@
 
     <div class="alert alert-warning" th:if="${error}" th:text="${error}"></div>
 
-    <div class="row g-4">
-        <div class="col-12 col-md-6 col-xl-4" th:each="comercial : ${listaComerciales}">
-            <article class="card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <h2 class="h5 card-title" th:text="${comercial.nombre + ' ' + comercial.apellido1 + (comercial.apellido2 != null ? ' ' + comercial.apellido2 : '')}">Nombre completo</h2>
-                    <p class="card-text"><strong>Comisión:</strong> <span th:text="${comercial.comision ?: '-'}">Comisión</span></p>
-                </div>
-                <div class="card-footer bg-white border-0 d-flex flex-wrap gap-2">
-                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/comerciales/{id}(id=${comercial.id})}">Ver detalle</a>
-                    <a class="btn btn-sm btn-outline-primary" th:href="@{/comerciales/editar/{id}(id=${comercial.id})}">Editar</a>
-                    <form th:action="@{/comerciales/borrar/{id}(id=${comercial.id})}" method="post">
-                        <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
-                    </form>
-                </div>
-            </article>
-        </div>
-        <div class="col-12" th:if="${#lists.isEmpty(listaComerciales)}">
-            <div class="alert alert-info">No hay comerciales registrados.</div>
-        </div>
+    <div class="table-responsive" th:unless="${#lists.isEmpty(listaComerciales)}">
+        <table class="table table-striped table-hover align-middle bg-white shadow-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre completo</th>
+                    <th>Comisión</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="comercial : ${listaComerciales}">
+                    <td th:text="${comercial.id}">1</td>
+                    <td th:text="${comercial.nombre + ' ' + comercial.apellido1 + (comercial.apellido2 != null ? ' ' + comercial.apellido2 : '')}">Nombre completo</td>
+                    <td th:text="${comercial.comision ?: '-'}">Comisión</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/comerciales/{id}(id=${comercial.id})}">Ver detalle</a>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/comerciales/editar/{id}(id=${comercial.id})}">Editar</a>
+                            <form th:action="@{/comerciales/borrar/{id}(id=${comercial.id})}" method="post">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+    <div class="alert alert-info" th:if="${#lists.isEmpty(listaComerciales)}">No hay comerciales registrados.</div>
 </main>
 </body>
 </html>
