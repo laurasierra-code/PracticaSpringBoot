@@ -2,6 +2,7 @@ package org.iesvdm.dao;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class PedidoDAOImpl implements PedidoDAO {
 		int rows = jdbcTemplate.update(connection -> {
 			PreparedStatement ps = connection.prepareStatement(sqlInsert, new String[] { "id" });
 			int index = 1;
-			ps.setDouble(index++, pedido.getTotal());
+			ps.setBigDecimal(index++, pedido.getTotal());
 			if (pedido.getFecha() == null) {
 				ps.setObject(index++, null);
 			} else {
@@ -54,7 +55,7 @@ public class PedidoDAOImpl implements PedidoDAO {
 	public List<Pedido> getAll() {
 		List<Pedido> pedidos = jdbcTemplate.query(
 				"SELECT * FROM pedido",
-				(rs, rowNum) -> mapPedido(rs.getInt("id"), rs.getDouble("total"),
+				(rs, rowNum) -> mapPedido(rs.getInt("id"), rs.getBigDecimal("total"),
 						rs.getDate("fecha"), rs.getInt("id_cliente"), rs.getInt("id_comercial")));
 
 		log.info("Devueltos {} pedidos.", pedidos.size());
@@ -65,7 +66,7 @@ public class PedidoDAOImpl implements PedidoDAO {
 	public Optional<Pedido> find(int id) {
 		Pedido pedido = jdbcTemplate.query(
 				"SELECT * FROM pedido WHERE id = ?",
-				(rs, rowNum) -> mapPedido(rs.getInt("id"), rs.getDouble("total"),
+				(rs, rowNum) -> mapPedido(rs.getInt("id"), rs.getBigDecimal("total"),
 						rs.getDate("fecha"), rs.getInt("id_cliente"), rs.getInt("id_comercial")),
 				id).stream().findFirst().orElse(null);
 
@@ -84,7 +85,7 @@ public class PedidoDAOImpl implements PedidoDAO {
 				""",
 				(rs, rowNum) -> mapPedidoDetalle(
 						rs.getInt("id"),
-						rs.getDouble("total"),
+						rs.getBigDecimal("total"),
 						rs.getDate("fecha"),
 						rs.getInt("id_cliente"),
 						rs.getInt("id_comercial"),
@@ -108,7 +109,7 @@ public class PedidoDAOImpl implements PedidoDAO {
 				""",
 				(rs, rowNum) -> mapPedidoDetalle(
 						rs.getInt("id"),
-						rs.getDouble("total"),
+						rs.getBigDecimal("total"),
 						rs.getDate("fecha"),
 						rs.getInt("id_cliente"),
 						rs.getInt("id_comercial"),
@@ -144,11 +145,11 @@ public class PedidoDAOImpl implements PedidoDAO {
 		log.info("Delete de Pedido con {} registros eliminados.", rows);
 	}
 
-	private Pedido mapPedido(int id, double total, Date fecha, int clienteId, int comercialId) {
+	private Pedido mapPedido(int id, BigDecimal total, Date fecha, int clienteId, int comercialId) {
 		return new Pedido(id, total, fecha == null ? null : fecha.toLocalDate(), clienteId, comercialId);
 	}
 
-	private PedidoDetalle mapPedidoDetalle(int id, double total, Date fecha, int clienteId, int comercialId,
+	private PedidoDetalle mapPedidoDetalle(int id, BigDecimal total, Date fecha, int clienteId, int comercialId,
 			String clienteNombre, String comercialNombre) {
 		return new PedidoDetalle(id, total, fecha == null ? null : fecha.toLocalDate(), clienteId, comercialId,
 				clienteNombre, comercialNombre);

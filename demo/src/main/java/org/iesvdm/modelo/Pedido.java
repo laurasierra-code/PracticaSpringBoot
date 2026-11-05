@@ -1,6 +1,7 @@
 package org.iesvdm.modelo;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Pedido {
 
 	private int id;
-	private double total;
+	private BigDecimal total;
 	private LocalDate fecha;
 	private int clienteId;
 	private int comercialId;
