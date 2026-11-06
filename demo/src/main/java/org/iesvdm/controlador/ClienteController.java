@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -42,10 +43,12 @@ public class ClienteController {
     //@RequestMapping(value = "/clientes", method = RequestMethod.GET)
     //equivalente a la siguiente anotación
     @GetMapping
-    public String listar(Model model) {
+    public String listar(Model model,
+            @RequestParam(name = "filtro", required = false, defaultValue = "") String filtro) {
 
         List<Cliente> listaClientes = clienteService.listAll();
         model.addAttribute("listaClientes", listaClientes);
+        model.addAttribute("filtro", filtro);
 
         return "clientes"; //devuelve la plantilla html clientes.html que se encuentra en src/main/resources/templates
     }
