@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-@RequestMapping("/clientes")
+@RequestMapping({"/clientes", "/clientes={ciudad}"})
 @Controller //usa templates html (thymeleaf, freemarker, etc) para devolver la respuesta al cliente. No devuelve datos en formato JSON o XML como hace @RestController
 
 //Se puede fijar la ruta base de las peticiones  de este controador.
@@ -44,11 +44,14 @@ public class ClienteController {
     //equivalente a la siguiente anotación
     @GetMapping
     public String listar(Model model,
-            @RequestParam(name = "filtro", required = false, defaultValue = "") String filtro) {
+            @RequestParam(name = "filtro", required = false, defaultValue = "") String filtro,
+            @PathVariable(name = "ciudad", required = false) String ciudad) {
 
-        List<Cliente> listaClientes = clienteService.listAll();
+        List<Cliente> listaClientes = ciudad == null
+                ? clienteService.listAll()
+                : clienteService.getByCiudad(ciudad);
         model.addAttribute("listaClientes", listaClientes);
-        model.addAttribute("filtro", filtro);
+        model.addAttribute("filtro", ciudad == null ? filtro : ciudad);
 
         return "clientes"; //devuelve la plantilla html clientes.html que se encuentra en src/main/resources/templates
     }
