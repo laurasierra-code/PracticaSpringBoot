@@ -47,11 +47,12 @@ public class ClienteController {
             @RequestParam(name = "filtro", required = false, defaultValue = "") String filtro,
             @PathVariable(name = "ciudad", required = false) String ciudad) {
 
-        List<Cliente> listaClientes = ciudad == null
+        String ciudadBuscada = ciudad != null ? ciudad : filtro.trim();
+        List<Cliente> listaClientes = ciudadBuscada.isEmpty()
                 ? clienteService.listAll()
-                : clienteService.getByCiudad(ciudad);
+                : clienteService.getByCiudad(ciudadBuscada);
         model.addAttribute("listaClientes", listaClientes);
-        model.addAttribute("filtro", ciudad == null ? filtro : ciudad);
+        model.addAttribute("filtro", ciudadBuscada);
 
         return "clientes"; //devuelve la plantilla html clientes.html que se encuentra en src/main/resources/templates
     }
