@@ -143,6 +143,30 @@ public class PedidoDAOImpl implements PedidoDAO {
 		return pedidos;
 	}
 
+	@Override
+	public List<PedidoDetalle> findByClienteId(int clienteId) {
+		List<PedidoDetalle> pedidos = jdbcTemplate.query("""
+				SELECT p.id, p.total, p.fecha, p.id_cliente, p.id_comercial,
+				       CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente_nombre,
+				       CONCAT_WS(' ', co.nombre, co.apellido1, co.apellido2) AS comercial_nombre
+				FROM pedido p
+				JOIN cliente c ON c.id = p.id_cliente
+				JOIN comercial co ON co.id = p.id_comercial
+				WHERE p.id_cliente = ?
+				""",
+				(rs, rowNum) -> mapPedidoDetalle(
+						rs.getInt("id"),
+						rs.getBigDecimal("total"),
+						rs.getDate("fecha"),
+						rs.getInt("id_cliente"),
+						rs.getInt("id_comercial"),
+						rs.getString("cliente_nombre"),
+						rs.getString("comercial_nombre")),
+				clienteId);
+		log.info("Devueltos {} detalles de pedidos para el cliente con id {}.", pedidos.size(), clienteId);
+		return pedidos;
+	}
+
 
 	@Override
 	public void update(Pedido pedido) {

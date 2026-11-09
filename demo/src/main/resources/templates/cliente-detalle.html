@@ -25,6 +25,31 @@
             </div>
         </div>
     </div>
+
+    <section class="mt-4" th:if="${!#lists.isEmpty(listaPedidos)}">
+        <h2 class="h4 text-primary">Pedidos asociados</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle bg-white shadow-sm">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Comercial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="pedido : ${listaPedidos}">
+                        <td th:text="${pedido.id}">1</td>
+                        <td th:text="${pedido.fecha ?: '-'}">2025-01-01</td>
+                        <td th:text="${pedido.total ?: '-'}">0.00</td>
+                        <td th:text="${pedido.comercialNombre ?: '-'}">Comercial</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <p class="alert alert-info mt-4" th:if="${#lists.isEmpty(listaPedidos)}">Este cliente no tiene pedidos asociados.</p>
 </main>
 </body>
 </html>

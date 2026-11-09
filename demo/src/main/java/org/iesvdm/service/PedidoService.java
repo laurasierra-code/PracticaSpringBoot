@@ -37,6 +37,10 @@ public class PedidoService {
 		return pedidoDAO.findByComercialId(comercialId);
 	}
 
+	public List<PedidoDetalle> findByClienteId(int clienteId) {
+		return pedidoDAO.findByClienteId(clienteId);
+	}
+
 	public void create(Pedido pedido) {
 		pedidoDAO.create(pedido);
 	}

@@ -3,6 +3,7 @@ package org.iesvdm.controlador;
 import java.util.List;
 
 import org.iesvdm.modelo.Cliente;
+import org.iesvdm.modelo.PedidoDetalle;
 import org.iesvdm.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,7 +88,9 @@ public class ClienteController {
     public String detalle(@PathVariable int id, Model model) {
         Cliente cliente = clienteService.find(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado: " + id));
+        List<PedidoDetalle> listaPedidos = clienteService.findPedidosByClienteId(id);
         model.addAttribute("cliente", cliente);
+        model.addAttribute("listaPedidos", listaPedidos);
         return "cliente-detalle";
     }
 
