@@ -3,6 +3,7 @@ package org.iesvdm.controlador;
 import java.util.List;
 
 import org.iesvdm.modelo.Comercial;
+import org.iesvdm.modelo.PedidoDetalle;
 import org.iesvdm.service.ComercialService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,11 +59,17 @@ public class ComercialController {
     }
 
     @GetMapping("/{id}")
-    public String detalle(@PathVariable int id, Model model) {
-        Comercial comercial = comercialService.find(id)
-                .orElseThrow(() -> new IllegalArgumentException("Comercial no encontrado: " + id));
-        model.addAttribute("comercial", comercial);
-        return "comercial-detalle";
+    public String detalle(Model model, @PathVariable int id) {
+        return comercialService.find(id)
+                .map(comercial -> {
+                    List<PedidoDetalle> listaPedidos = comercialService.findPedidosByComercialId(id);
+
+                    model.addAttribute("comercial", comercial);
+                    model.addAttribute("listaPedidos", listaPedidos);
+
+                    return "comercial-detalle";
+                })
+                .orElse("redirect:/comerciales");
     }
 
     @PostMapping("/borrar/{id}")
