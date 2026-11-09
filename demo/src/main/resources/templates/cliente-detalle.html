@@ -43,7 +43,15 @@
                         <td th:text="${pedido.id}">1</td>
                         <td th:text="${pedido.fecha ?: '-'}">2025-01-01</td>
                         <td th:text="${pedido.total ?: '-'}">0.00</td>
-                        <td th:text="${pedido.comercialNombre ?: '-'}">Comercial</td>
+                        <td>
+                            <a th:if="${pedido.comercialNombre != null}"
+                               th:href="@{/comerciales/{id}(id=${pedido.comercialId})}"
+                               th:text="${pedido.comercialNombre}"
+                               target="_blank">
+                                Comercial
+                            </a>
+                            <span th:unless="${pedido.comercialNombre != null}">-</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
