@@ -8,17 +8,20 @@ import org.iesvdm.modelo.PedidoDetalle;
 
 public interface PedidoDAO {
 
-	void create(Pedido pedido);
-
 	List<Pedido> getAll();
-
+	
 	Optional<Pedido> find(int id);
-
+	
 	List<PedidoDetalle> getAllDetalles();
-
+	
 	Optional<PedidoDetalle> findDetalle(int id);
-
+	
+	List<PedidoDetalle> findByComercialId(int comercialId);
+	
+	void create(Pedido pedido);
+	
 	void update(Pedido pedido);
-
+	
 	void delete(int id);
+
 }

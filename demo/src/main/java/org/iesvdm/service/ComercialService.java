@@ -4,13 +4,18 @@ import java.util.List;
 
 import org.iesvdm.dao.ComercialDAO;
 import org.iesvdm.modelo.Comercial;
+import org.iesvdm.modelo.PedidoDetalle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
 public class ComercialService {
+    @Autowired 
+    private  ComercialDAO comercialDAO;
 
-    private final ComercialDAO comercialDAO;
+    @Autowired 
+    private  PedidoService pedidoDAO;
 
     public ComercialService(ComercialDAO comercialDAO) {
         this.comercialDAO = comercialDAO;
@@ -28,6 +33,9 @@ public class ComercialService {
         comercialDAO.create(comercial);
     }
 
+    public List<PedidoDetalle> findPedidosByComercialId(int comercialId) {
+        return pedidoDAO.findByComercialId(comercialId);
+    }
     public void update(Comercial comercial) {
         comercialDAO.update(comercial);
     }
