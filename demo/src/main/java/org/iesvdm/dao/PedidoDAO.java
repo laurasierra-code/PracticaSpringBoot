@@ -3,6 +3,7 @@ package org.iesvdm.dao;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.dto.ClienteTotalPedidosDTO;
 import org.iesvdm.modelo.Pedido;
 import org.iesvdm.modelo.PedidoDetalle;
 
@@ -19,6 +20,8 @@ public interface PedidoDAO {
 	List<PedidoDetalle> findByComercialId(int comercialId);
 
 	List<PedidoDetalle> findByClienteId(int clienteId);
+
+	List<ClienteTotalPedidosDTO> findClientesConPedidosPorComercial(int comercialId);
 	
 	void create(Pedido pedido);
 	

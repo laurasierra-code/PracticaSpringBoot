@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.dto.ClienteTotalPedidosDTO;
 import org.iesvdm.modelo.Pedido;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -165,6 +166,30 @@ public class PedidoDAOImpl implements PedidoDAO {
 				clienteId);
 		log.info("Devueltos {} detalles de pedidos para el cliente con id {}.", pedidos.size(), clienteId);
 		return pedidos;
+	}
+
+	@Override
+	public List<ClienteTotalPedidosDTO> findClientesConPedidosPorComercial(int comercialId) {
+		List<ClienteTotalPedidosDTO> clientes = jdbcTemplate.query("""
+				SELECT c.id,
+				       CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente_nombre,
+				       SUM(p.total) AS total_pedidos
+				FROM cliente c
+				JOIN pedido pedido_comercial
+				  ON pedido_comercial.id_cliente = c.id
+				 AND pedido_comercial.id_comercial = ?
+				JOIN pedido p ON p.id_cliente = c.id
+				GROUP BY c.id, c.nombre, c.apellido1, c.apellido2
+				ORDER BY total_pedidos DESC, c.nombre, c.apellido1, c.apellido2
+				""",
+				(rs, rowNum) -> new ClienteTotalPedidosDTO(
+						rs.getInt("id"),
+						rs.getString("cliente_nombre"),
+						rs.getBigDecimal("total_pedidos")),
+				comercialId);
+
+		log.info("Devueltos {} clientes con pedidos del comercial con id {}.", clientes.size(), comercialId);
+		return clientes;
 	}
 
 

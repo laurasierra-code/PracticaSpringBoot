@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.iesvdm.modelo.Comercial;
 import org.iesvdm.modelo.PedidoDetalle;
+import org.iesvdm.dto.ClienteTotalPedidosDTO;
+import org.iesvdm.dto.EstadisticasPedidosDTO;
 import org.iesvdm.service.ComercialService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,9 +65,14 @@ public class ComercialController {
         return comercialService.find(id)
                 .map(comercial -> {
                     List<PedidoDetalle> listaPedidos = comercialService.findPedidosByComercialId(id);
+                    EstadisticasPedidosDTO estadisticas = comercialService.calcularEstadisticas(listaPedidos);
+                    List<ClienteTotalPedidosDTO> listaClientes = comercialService
+                            .findClientesConPedidosPorComercial(id);
 
                     model.addAttribute("comercial", comercial);
                     model.addAttribute("listaPedidos", listaPedidos);
+                    model.addAttribute("estadisticas", estadisticas);
+                    model.addAttribute("listaClientes", listaClientes);
 
                     return "comercial-detalle";
                 })
