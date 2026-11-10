@@ -173,19 +173,31 @@ public class PedidoDAOImpl implements PedidoDAO {
 		List<ClienteTotalPedidosDTO> clientes = jdbcTemplate.query("""
 				SELECT c.id,
 				       CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente_nombre,
-				       SUM(p.total) AS total_pedidos
+				       SUM(p.total) AS total_pedidos_comercial,
+				       (
+				       	SELECT SUM(p_general.total)
+				       	FROM pedido p_general
+				       	WHERE p_general.id_cliente = c.id
+				       ) AS total_pedidos_general
 				FROM cliente c
-				JOIN pedido pedido_comercial
-				  ON pedido_comercial.id_cliente = c.id
-				 AND pedido_comercial.id_comercial = ?
-				JOIN pedido p ON p.id_cliente = c.id
+				JOIN pedido p
+				  ON p.id_cliente = c.id
+				 AND p.id_comercial = ?
+				WHERE EXISTS (
+					SELECT 1
+					FROM pedido pedido_comercial
+					WHERE pedido_comercial.id_cliente = c.id
+					  AND pedido_comercial.id_comercial = ?
+				)
 				GROUP BY c.id, c.nombre, c.apellido1, c.apellido2
-				ORDER BY total_pedidos DESC, c.nombre, c.apellido1, c.apellido2
+				ORDER BY total_pedidos_comercial DESC, c.nombre, c.apellido1, c.apellido2
 				""",
 				(rs, rowNum) -> new ClienteTotalPedidosDTO(
 						rs.getInt("id"),
 						rs.getString("cliente_nombre"),
-						rs.getBigDecimal("total_pedidos")),
+						rs.getBigDecimal("total_pedidos_comercial"),
+						rs.getBigDecimal("total_pedidos_general")),
+				comercialId,
 				comercialId);
 
 		log.info("Devueltos {} clientes con pedidos del comercial con id {}.", clientes.size(), comercialId);

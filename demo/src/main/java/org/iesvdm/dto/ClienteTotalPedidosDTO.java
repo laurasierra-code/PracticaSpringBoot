@@ -11,5 +11,6 @@ public class ClienteTotalPedidosDTO {
 
 	private int id;
 	private String nombre;
-	private BigDecimal totalPedidos;
+	private BigDecimal totalPedidosComercial;
+	private BigDecimal totalPedidosGeneral;
 }

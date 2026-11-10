@@ -34,8 +34,18 @@
                     <td th:text="${pedido.id}">1</td>
                     <td th:text="${pedido.total}">0</td>
                     <td th:text="${pedido.fecha ?: '-'}">-</td>
-                    <td th:text="${pedido.clienteNombre}">Cliente</td>
-                    <td th:text="${pedido.comercialNombre}">Comercial</td>
+                    <td>
+                        <a th:href="@{/clientes/{id}(id=${pedido.clienteId})}"
+                           th:text="${pedido.clienteNombre}">
+                            Cliente
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{/comerciales/{id}(id=${pedido.comercialId})}"
+                           th:text="${pedido.comercialNombre}">
+                            Comercial
+                        </a>
+                    </td>
                     <td>
                         <div class="d-flex flex-wrap gap-2">
                             <a class="btn btn-sm btn-outline-secondary" th:href="@{/pedidos/{id}(id=${pedido.id})}">Ver detalle</a>
