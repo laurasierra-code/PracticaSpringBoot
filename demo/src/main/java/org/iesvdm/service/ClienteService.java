@@ -2,6 +2,7 @@ package org.iesvdm.service;
 
 import org.iesvdm.dao.ClienteDAO;
 import org.iesvdm.modelo.Cliente;
+import org.iesvdm.modelo.Comercial;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -34,6 +35,10 @@ public class ClienteService {
 
     public List<PedidoDetalle> findPedidosByClienteId(int clienteId) {
         return pedidoService.findByClienteId(clienteId);
+    }
+
+    public List<Comercial> findComercialesByClienteId(int clienteId) {
+        return pedidoService.findComercialesByClienteId(clienteId);
     }
 
     public void create(Cliente cliente) {

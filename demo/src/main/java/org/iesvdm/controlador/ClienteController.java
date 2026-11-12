@@ -3,7 +3,9 @@ package org.iesvdm.controlador;
 import java.util.List;
 
 import org.iesvdm.modelo.Cliente;
+import org.iesvdm.modelo.ClienteComercial;
 import org.iesvdm.modelo.PedidoDetalle;
+import org.iesvdm.service.ClienteComercialService;
 import org.iesvdm.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,12 @@ public class ClienteController {
     // Version 1: inyeccion automatica por atributo.
     @Autowired
     private ClienteService clienteService;
+
+    private final ClienteComercialService clienteComercialService;
+
+    public ClienteController(ClienteComercialService clienteComercialService) {
+        this.clienteComercialService = clienteComercialService;
+    }
 
     /*
      * Version 2: inyeccion automatica por constructor.
@@ -81,7 +89,32 @@ public class ClienteController {
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado: " + id));
         model.addAttribute("cliente", cliente);
         model.addAttribute("titulo", "Editar cliente");
+        model.addAttribute("nuevoClienteComercial", new ClienteComercial());
+        model.addAttribute("comercialesDisponibles",
+                clienteComercialService.findComercialesDisponibles(id));
+        model.addAttribute("comercialesVinculados",
+                clienteComercialService.findByClienteId(id));
+        model.addAttribute("comercialesConPedidos",
+                clienteService.findComercialesByClienteId(id));
         return "cliente-form";
+    }
+
+    @PostMapping("/{clienteId}/comerciales")
+    public String añadirComercial(@PathVariable int clienteId,
+            @ModelAttribute ClienteComercial clienteComercial,
+            RedirectAttributes redirectAttributes) {
+        clienteComercial.setClienteId(clienteId);
+        clienteComercialService.create(clienteComercial);
+        redirectAttributes.addFlashAttribute("mensaje", "Comercial añadido al cliente.");
+        return "redirect:/clientes/editar/" + clienteId;
+    }
+
+    @PostMapping("/{clienteId}/comerciales/{comercialId}/borrar")
+    public String borrarComercial(@PathVariable int clienteId, @PathVariable int comercialId,
+            RedirectAttributes redirectAttributes) {
+        clienteComercialService.delete(clienteId, comercialId);
+        redirectAttributes.addFlashAttribute("mensaje", "Comercial desvinculado del cliente.");
+        return "redirect:/clientes/editar/" + clienteId;
     }
 
     @GetMapping("/{id}")

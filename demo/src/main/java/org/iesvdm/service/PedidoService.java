@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.iesvdm.dao.PedidoDAO;
 import org.iesvdm.dto.ClienteTotalPedidosDTO;
+import org.iesvdm.modelo.Comercial;
 import org.iesvdm.modelo.Pedido;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,10 @@ public class PedidoService {
 
 	public List<PedidoDetalle> findByClienteId(int clienteId) {
 		return pedidoDAO.findByClienteId(clienteId);
+	}
+
+	public List<Comercial> findComercialesByClienteId(int clienteId) {
+		return pedidoDAO.findComercialesByClienteId(clienteId);
 	}
 
 	public List<ClienteTotalPedidosDTO> findClientesConPedidosPorComercial(int comercialId) {
